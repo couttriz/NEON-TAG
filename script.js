@@ -9,11 +9,9 @@ const state = {
     gameActive: false, 
     winScore: 500,
     playerSize: 40,
-    arenaW: 800,
-    arenaH: 500
+    arenaW: 800, arenaH: 500
 };
 
-// Cấu hình tường
 const wallsConfig = [
     { top: 150, left: 350, width: 20, height: 250 },
     { top: 100, left: 100, width: 150, height: 20 },
@@ -32,19 +30,15 @@ const powerUpEl = document.getElementById('powerup');
 let powerUpActive = false;
 let powerUpInterval = null;
 
-// --- CẬP NHẬT KÍCH THƯỚC ARENA ---
+// --- RESIZE HANDLE ---
 function updateArenaSize() {
     const arenaEl = document.getElementById('arena');
-    if(arenaEl) {
-        state.arenaW = arenaEl.clientWidth;
-        state.arenaH = arenaEl.clientHeight;
-    }
+    if(arenaEl) { state.arenaW = arenaEl.clientWidth; state.arenaH = arenaEl.clientHeight; }
 }
 window.addEventListener('resize', updateArenaSize);
-// Gọi ngay sau khi load để lấy size đúng
 setTimeout(updateArenaSize, 100);
 
-// --- SỰ KIỆN BÀN PHÍM (PC) ---
+// --- INPUT HANDLERS ---
 window.addEventListener('keydown', e => {
     const gameKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space", "KeyW", "KeyA", "KeyS", "KeyD"];
     if(gameKeys.includes(e.code)) e.preventDefault();
@@ -52,22 +46,17 @@ window.addEventListener('keydown', e => {
 });
 window.addEventListener('keyup', e => keys[e.code] = false);
 
-// --- SỰ KIỆN CẢM ỨNG (MOBILE) ---
 function setupTouchControls() {
     const bindTouch = (btnId, player, dir) => {
         const btn = document.getElementById(btnId);
         if (!btn) return;
-
         const setKey = (isActive) => { touchKeys[player][dir] = isActive; };
-        // Sự kiện Touch (Mobile)
         btn.addEventListener('touchstart', (e) => { e.preventDefault(); setKey(true); });
         btn.addEventListener('touchend', (e) => { e.preventDefault(); setKey(false); });
-        // Sự kiện Mouse (PC - để test giả lập)
         btn.addEventListener('mousedown', (e) => { setKey(true); });
         btn.addEventListener('mouseup', (e) => { setKey(false); });
         btn.addEventListener('mouseleave', (e) => { setKey(false); });
     };
-
     bindTouch('p1-up', 'p1', 'up'); bindTouch('p1-down', 'p1', 'down');
     bindTouch('p1-left', 'p1', 'left'); bindTouch('p1-right', 'p1', 'right');
     bindTouch('p2-up', 'p2', 'up'); bindTouch('p2-down', 'p2', 'down');
@@ -75,7 +64,7 @@ function setupTouchControls() {
 }
 setupTouchControls();
 
-// --- LOGIC GAME ---
+// --- LOGIC CHỌN CHẾ ĐỘ (CẬP NHẬT CĂN GIỮA) ---
 function selectMode(mode) {
     state.mode = mode;
     document.getElementById('startScreen').classList.add('hidden');
@@ -87,10 +76,18 @@ function selectMode(mode) {
     state.p2.x = state.arenaW * 0.9; state.p2.y = state.arenaH * 0.5;
     render(); 
 
-    // Ẩn/Hiện nút P2 tùy chế độ
+    // Lấy các phần tử điều khiển
+    const dualControls = document.getElementById('dual-controls');
     const p2Pad = document.querySelector('.p2-pad');
-    if(p2Pad) {
-        p2Pad.style.display = (mode === 'pve') ? 'none' : 'flex';
+
+    if (mode === 'pve') {
+        // Chế độ 1 người: Ẩn P2 và CĂN GIỮA P1
+        if(p2Pad) p2Pad.style.display = 'none';
+        if(dualControls) dualControls.style.justifyContent = 'center';
+    } else {
+        // Chế độ 2 người: Hiện P2 và ĐẨY RA 2 BÊN
+        if(p2Pad) p2Pad.style.display = 'flex';
+        if(dualControls) dualControls.style.justifyContent = 'space-between';
     }
 
     document.getElementById('readyScreen').classList.remove('hidden');
@@ -112,7 +109,6 @@ function setupArena(mode) {
     oldWalls.forEach(w => w.remove());
 
     const isLandscape = window.innerWidth > window.innerHeight;
-    // Chỉ hiện tường khi PvP và màn hình đủ rộng (PC hoặc Mobile xoay ngang)
     if (mode === 'pvp' && (window.innerWidth > 600 || isLandscape)) {
         wallsConfig.forEach(cfg => {
             const w = document.createElement('div');
@@ -135,31 +131,21 @@ function gameLoop() {
         moveAI_Pathfinder();
     }
 
-    checkTagCollision();
-    checkPowerUp();
-    updateScore();
-    render();
+    checkTagCollision(); checkPowerUp(); updateScore(); render();
     requestAnimationFrame(gameLoop);
 }
 
 function movePlayer(playerKey, up, down, left, right, touchInput) {
     const p = state[playerKey];
     let speed = p.speedBoost ? state.boostSpeed : state.baseSpeed;
-    
     let dx = 0, dy = 0;
     
-    // PC Keys
-    if (keys[up]) dy = -speed;
-    if (keys[down]) dy = speed;
-    if (keys[left]) dx = -speed;
-    if (keys[right]) dx = speed;
+    if (keys[up]) dy = -speed; if (keys[down]) dy = speed;
+    if (keys[left]) dx = -speed; if (keys[right]) dx = speed;
 
-    // Mobile Touch
     if (touchInput) {
-        if (touchInput.up) dy = -speed;
-        if (touchInput.down) dy = speed;
-        if (touchInput.left) dx = -speed;
-        if (touchInput.right) dx = speed;
+        if (touchInput.up) dy = -speed; if (touchInput.down) dy = speed;
+        if (touchInput.left) dx = -speed; if (touchInput.right) dx = speed;
     }
 
     if (dx !== 0 && !checkCollision(p.x + dx, p.y)) p.x += dx;
@@ -219,8 +205,7 @@ function checkTagCollision() {
     if (state.cooldown) return;
     const p1 = state.p1; const p2 = state.p2; const size = state.playerSize;
     if (p1.x < p2.x + size && p1.x + size > p2.x && p1.y < p2.y + size && p1.y + size > p2.y) {
-        state.chaser = (state.chaser === 'p1') ? 'p2' : 'p1';
-        state.cooldown = true;
+        state.chaser = (state.chaser === 'p1') ? 'p2' : 'p1'; state.cooldown = true;
         state.p1.el.classList.add('cooldown'); state.p2.el.classList.add('cooldown');
         statusText.innerText = `${state.chaser === 'p1' ? 'XANH' : 'ĐỎ'} ĐANG ĐUỔI!`;
         setTimeout(() => { state.cooldown = false; state.p1.el.classList.remove('cooldown'); state.p2.el.classList.remove('cooldown'); }, 1000);
