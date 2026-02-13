@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Neon Tag: Mobile Perfect</title>
+    <title>Neon Tag: Joystick Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,12 +12,10 @@
             <span>P1 (Xanh)</span>
             <h2 id="scoreP1">0</h2>
         </div>
-        
         <div class="status-display">
             <h1 id="statusText">CHỜ...</h1>
             <p>Mục tiêu: 500</p>
         </div>
-
         <div class="score-board p2-board">
             <span>P2 (Đỏ)</span>
             <h2 id="scoreP2">0</h2>
@@ -32,29 +30,23 @@
         </div>
     </div>
 
-    <div class="controls-hint" id="pc-instructions">
-        <p><strong>P1:</strong> W A S D &nbsp;|&nbsp; <strong>P2:</strong> Mũi tên</p>
+    <div id="pc-instructions" class="desktop-only">
+        <p><strong>P1:</strong> W A S D | <strong>P2:</strong> Mũi tên</p>
     </div>
 
-    <div id="dual-controls">
-        <div class="d-pad p1-pad">
+    <div id="dual-controls" class="mobile-only">
+        <div class="joystick-wrapper p1-pad">
             <div class="pad-label" style="color: #00f2ff;">P1</div>
-            <button id="p1-up" class="d-btn">▲</button>
-            <div class="d-middle">
-                <button id="p1-left" class="d-btn">◀</button>
-                <button id="p1-right" class="d-btn">▶</button>
+            <div id="joystick-base-p1" class="joystick-base">
+                <div id="joystick-thumb-p1" class="joystick-thumb"></div>
             </div>
-            <button id="p1-down" class="d-btn">▼</button>
         </div>
 
-        <div class="d-pad p2-pad">
+        <div class="joystick-wrapper p2-pad">
             <div class="pad-label" style="color: #ff0055;">P2</div>
-            <button id="p2-up" class="d-btn">▲</button>
-            <div class="d-middle">
-                <button id="p2-left" class="d-btn">◀</button>
-                <button id="p2-right" class="d-btn">▶</button>
+            <div id="joystick-base-p2" class="joystick-base">
+                <div id="joystick-thumb-p2" class="joystick-thumb"></div>
             </div>
-            <button id="p2-down" class="d-btn">▼</button>
         </div>
     </div>
 
@@ -63,9 +55,6 @@
         <p>Chọn chế độ chơi:</p>
         <button onclick="selectMode('pve')">1 NGƯỜI (Vs Máy)</button>
         <button onclick="selectMode('pvp')">2 NGƯỜI (Vs Bạn)</button>
-        <p class="mobile-note" style="margin-top: 15px; color: #aaa; font-size: 0.9rem;">
-            *Trên điện thoại: Xoay ngang màn hình để chơi 2 người.
-        </p>
     </div>
 
     <div id="readyScreen" class="hidden overlay-screen">
