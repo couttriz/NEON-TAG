@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Tag: Auto Detect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="ui-panel">
+        <div class="score-board p1-board">
+            <span>P1 (Xanh)</span>
+            <h2 id="scoreP1">0</h2>
+        </div>
+        
+        <div class="status-display">
+            <h1 id="statusText">CHỜ...</h1>
+            <p>Mục tiêu: 500</p>
+        </div>
+
+        <div class="score-board p2-board">
+            <span>P2 (Đỏ)</span>
+            <h2 id="scoreP2">0</h2>
+        </div>
+    </div>
+
+    <div id="arena-container">
+        <div id="arena">
+            <div id="p1" class="player"></div>
+            <div id="p2" class="player"></div>
+            <div id="powerup" class="powerup">⚡</div>
+        </div>
+    </div>
+
+    <div class="controls-hint" id="pc-instructions">
+        <p><strong>P1:</strong> W A S D &nbsp;|&nbsp; <strong>P2:</strong> Mũi tên</p>
+    </div>
+
+    <div id="dual-controls">
+        
+        <div class="d-pad p1-pad">
+            <div class="pad-label" style="color: #00f2ff;">P1</div>
+            <button id="p1-up" class="d-btn">▲</button>
+            <div class="d-middle">
+                <button id="p1-left" class="d-btn">◀</button>
+                <button id="p1-right" class="d-btn">▶</button>
+            </div>
+            <button id="p1-down" class="d-btn">▼</button>
+        </div>
+
+        <div class="d-pad p2-pad">
+            <div class="pad-label" style="color: #ff0055;">P2</div>
+            <button id="p2-up" class="d-btn">▲</button>
+            <div class="d-middle">
+                <button id="p2-left" class="d-btn">◀</button>
+                <button id="p2-right" class="d-btn">▶</button>
+            </div>
+            <button id="p2-down" class="d-btn">▼</button>
+        </div>
+
+    </div>
+
+    <div id="startScreen" class="overlay-screen">
+        <h1>NEON TAG</h1>
+        <p>Chọn chế độ chơi:</p>
+        <button onclick="selectMode('pve')">1 NGƯỜI (Vs Máy)</button>
+        <button onclick="selectMode('pvp')">2 NGƯỜI (Vs Bạn)</button>
+        <p class="mobile-note" style="margin-top: 15px; color: #aaa; font-size: 0.9rem;">
+            *Trên điện thoại: Xoay ngang màn hình để chơi 2 người.
+        </p>
+    </div>
+
+    <div id="readyScreen" class="hidden overlay-screen">
+        <h1 style="color: yellow;">SẴN SÀNG?</h1>
+        <button onclick="confirmStart()">BẮT ĐẦU</button>
+    </div>
+
+    <div id="gameOverScreen" class="hidden overlay-screen">
+        <h1 id="winnerText">CHIẾN THẮNG!</h1>
+        <button onclick="location.reload()">CHƠI LẠI</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
